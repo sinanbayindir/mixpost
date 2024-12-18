@@ -3,30 +3,26 @@ services:
   - type: web
     name: mixpost
     env: php
-    region: frankfurt
+    rootDirectory: .
     buildCommand: |
       composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
       npm install
+      php artisan ziggy:generate
       npm run build
-      php artisan storage:link
     startCommand: |
       php artisan migrate --force
       php artisan config:cache
       php artisan route:cache
       php artisan view:cache
-      php artisan serve --port=$PORT --host=0.0.0.0
+      php artisan storage:link
+      php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
-      - key: APP_NAME
-        value: Mixpost
-      - key: APP_ENV 
-        value: production
       - key: APP_KEY
         generateValue: true
-      - key: APP_URL
-        fromService:
-          type: web
-          name: mixpost
-          property: host
+      - key: APP_NAME
+        value: Mixpost
+      - key: APP_ENV
+        value: production
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -49,4 +45,5 @@ services:
 databases:
   - name: mixpost-db
     databaseName: mixpost
+    user: mixpost
     plan: free
