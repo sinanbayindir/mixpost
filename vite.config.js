@@ -7,10 +7,7 @@ import { resolve } from 'path';
 import { homedir } from 'os';
 
 export default defineConfig(({command, mode}) => {
-    // Load current .env-file
     const env = loadEnv(mode, process.cwd(), '')
-
-    // Set the host based on APP_URL
     let host = env.APP_URL !== undefined ? new URL(env.APP_URL).host : null;
     let homeDir = homedir()
     let serverConfig = {}
@@ -56,9 +53,15 @@ export default defineConfig(({command, mode}) => {
         resolve: {
             alias: {
                 '@css': '/resources/css',
-                '@img': 'resources/img'
+                '@img': 'resources/img',
+                '@': '/resources/js',
+                'ziggy': '/vendor/tightenco/ziggy/dist/vue.m.js',
+                'ziggy-js': '/vendor/tightenco/ziggy/dist/index.js'
             },
         },
-        server: serverConfig
+        server: serverConfig,
+        optimizeDeps: {
+            include: ['ziggy-js']
+        }
     }
 });
